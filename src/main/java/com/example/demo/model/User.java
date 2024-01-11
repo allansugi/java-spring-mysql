@@ -10,8 +10,11 @@ public class User {
     private String username;
     private String password;
 
-    public User() {
-
+    public User(String id, String email, String username, String password) {
+        this.id = id;
+        this.email = email;
+        this.username = username;
+        this.password = password;
     }
 
     public User(UserRegisterForm form) {
