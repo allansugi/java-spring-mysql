@@ -37,7 +37,7 @@ public class UserControllerImpl implements UserController {
 
     @PostMapping("/login")
     @Override
-    public void login(UserLoginForm form) throws DatabaseErrorException, AuthenticationException {
+    public void login(@RequestBody UserLoginForm form) throws DatabaseErrorException, AuthenticationException {
         Boolean authenticate = this.service.authenticate(form);
         if (!authenticate) {
             throw new AuthenticationException("incorrect email or password");

@@ -17,11 +17,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class UserDaoImpl implements CrudDao<User> {
 
-    private String url = "jdbc:mysql://db:3306/app";
-    private String username = "root";
-    private String password = "password";
-    private String storeQry = "INSERT INTO user (id, username, email, password) VALUES (?, ?, ?, ?)";
-    private String findAllQry = "SELECT * FROM user";
+    private final String url = "jdbc:mysql://db:3306/app";
+    private final String username = "root";
+    private final String password = "password";
+    private final String storeQry = "INSERT INTO user (id, username, email, password) VALUES (?, ?, ?, ?)";
+    private final String findAllQry = "SELECT * FROM user";
+    private final String deleteQry = "DELETE FROM user where id = ?";
+    private final String findIdQry = "SELECT * FROM user WHERE id = ?";
 
     private Connection getConnection() throws SQLException {
         return DriverManager.getConnection(url, username, password);
@@ -41,9 +43,23 @@ public class UserDaoImpl implements CrudDao<User> {
     }
 
     @Override
-    public User findById(String id) {
+    public User findById(String id) throws SQLException {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findById'");
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+            PreparedStatement statement = connection.prepareStatement(findIdQry);
+            statement.setString(1, id);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return new User(
+                    rs.getString("id"), 
+                    rs.getString("email"), 
+                    rs.getString("username"), 
+                    rs.getString("password")
+                );
+            }
+
+            return null;
+        }
     }
 
     @Override
@@ -61,5 +77,14 @@ public class UserDaoImpl implements CrudDao<User> {
             return users;
         }
     }
-    
+
+    @Override
+    public void delete(String id) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+            PreparedStatement statement = connection.prepareStatement(deleteQry);
+            statement.setString(1, id);
+            statement.execute();
+        }
+    }
+
 }
