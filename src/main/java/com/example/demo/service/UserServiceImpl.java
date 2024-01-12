@@ -1,5 +1,8 @@
 package com.example.demo.service;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.demo.dao.UserDaoImpl;
 import com.example.demo.exception.DatabaseErrorException;
 import com.example.demo.form.UserLoginForm;
@@ -15,6 +18,7 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
     private final UserDaoImpl dao;
+    private final String secret = "secret";
 
     @Autowired
     public UserServiceImpl(UserDaoImpl dao) {
@@ -23,6 +27,10 @@ public class UserServiceImpl implements UserService {
 
     private User convertToData(UserRegisterForm form) {
         return new User(form);
+    }
+    private String createToken() {
+        Algorithm algorithm = Algorithm.HMAC512(this.secret);
+        return JWT.create().withIssuer("auth0").sign(algorithm);
     }
     private User encryptPassword(User user) {
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());

@@ -12,4 +12,5 @@ public interface CrudDao<T> {
     public T findById(String id) throws SQLException;
     public List<T> findAll() throws SQLException;
     public void delete(String id) throws SQLException;
+    public void update(T data) throws SQLException;
 }

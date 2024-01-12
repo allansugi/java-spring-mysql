@@ -4,14 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import com.example.demo.exception.DatabaseErrorException;
 import com.example.demo.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-
-import com.example.demo.model.Account;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -24,6 +17,7 @@ public class UserDaoImpl implements CrudDao<User> {
     private final String findAllQry = "SELECT * FROM user";
     private final String deleteQry = "DELETE FROM user where id = ?";
     private final String findIdQry = "SELECT * FROM user WHERE id = ?";
+    private final String updateQry = "UPDATE user SET username = ?, email = ?, password = ? where id = ?";
 
     private Connection getConnection() throws SQLException {
         return DriverManager.getConnection(url, username, password);
@@ -57,7 +51,6 @@ public class UserDaoImpl implements CrudDao<User> {
                     rs.getString("password")
                 );
             }
-
             return null;
         }
     }
@@ -86,5 +79,18 @@ public class UserDaoImpl implements CrudDao<User> {
             statement.execute();
         }
     }
+
+    @Override
+    public void update(User data) throws SQLException {
+        try (Connection connection = getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(updateQry);
+            statement.setString(1, data.getUsername());
+            statement.setString(2, data.getEmail());
+            statement.setString(3, data.getPassword());
+            statement.setString(4, data.getId());
+            statement.execute();
+        }
+    }
+
 
 }

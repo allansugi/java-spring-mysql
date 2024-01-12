@@ -24,6 +24,10 @@ public class AccountDaoImpl implements CrudDao<Account> {
                                         account_password = ?
                                     WHERE id = ? and userId = ?
                                     """;
+
+    private Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(url, username, password);
+    }
     @Override
     public void store(Account data) throws SQLException {
         try (Connection connection = DriverManager.getConnection(url, username, password)) {
@@ -85,4 +89,19 @@ public class AccountDaoImpl implements CrudDao<Account> {
             statement.execute();
         }
     }
+
+    @Override
+    public void update(Account data) throws SQLException {
+        try (Connection connection = getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(updateQry);
+            statement.setString(1, data.getAccount_name());
+            statement.setString(2, data.getAccount_username());
+            statement.setString(3, data.getAccount_password());
+            statement.setString(4, data.getId());
+            statement.setString(5, data.getUserId());
+            statement.execute();
+        }
+    }
+
+
 }
