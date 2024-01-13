@@ -27,8 +27,8 @@ public class AccountControllerImpl implements AccountController{
 
     @PutMapping("/update")
     @Override
-    public void updateExistingAccount(Account account) {
-
+    public void updateExistingAccount(Account account) throws DatabaseErrorException {
+        this.service.updateAccount(account);
     }
 
     @DeleteMapping("/delete/{accountId}")

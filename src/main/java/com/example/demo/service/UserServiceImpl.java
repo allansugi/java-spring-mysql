@@ -63,4 +63,20 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public void updatePassword() throws DatabaseErrorException {
+
+    }
+
+    @Override
+    public void updateUsername() throws DatabaseErrorException {
+
+    }
+
+    @Override
+    public void updateEmail() throws DatabaseErrorException {
+
+    }
+
+
 }

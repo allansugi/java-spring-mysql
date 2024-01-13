@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface AccountController {
     public void insertNewAccount(@RequestBody AccountForm form) throws DatabaseErrorException;
-    public void updateExistingAccount(@RequestBody Account account);
+    public void updateExistingAccount(@RequestBody Account account) throws DatabaseErrorException;
     public void deleteAccount(String accountId) throws DatabaseErrorException;
     public List<Account> findUserAccounts(String userId) throws DatabaseErrorException;
 }

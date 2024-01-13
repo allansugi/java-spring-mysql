@@ -29,8 +29,12 @@ public class AccountServiceImpl implements AccountService{
     }
 
     @Override
-    public void updateAccount(Account account) {
-
+    public void updateAccount(Account account) throws DatabaseErrorException {
+        try {
+            this.dao.update(account);
+        } catch (SQLException e) {
+            throw new DatabaseErrorException();
+        }
     }
 
     @Override

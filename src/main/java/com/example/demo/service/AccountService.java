@@ -10,7 +10,7 @@ import java.util.List;
 @Service
 public interface AccountService {
     public void addAccount(AccountForm form) throws DatabaseErrorException;
-    public void updateAccount(Account account);
+    public void updateAccount(Account account) throws DatabaseErrorException;
     public void deleteAccount(String accountId) throws DatabaseErrorException;
     public List<Account> findUserAccounts(String userId) throws DatabaseErrorException;
 }
