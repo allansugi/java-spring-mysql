@@ -25,7 +25,6 @@ public class UserDaoImpl implements CrudDao<User> {
 
     @Override
     public void store(User data) throws SQLException {
-        // TODO Auto-generated method stub
         try (Connection connection = DriverManager.getConnection(url, username, password)) {
             PreparedStatement statement = connection.prepareStatement(storeQry);
             statement.setString(1, data.getId());
@@ -81,7 +80,7 @@ public class UserDaoImpl implements CrudDao<User> {
     }
 
     /**
-     * update entire user account data, not used
+     * update entire user account data, NOT USED
      * @param data
      * @throws SQLException
      */
@@ -122,8 +121,8 @@ public class UserDaoImpl implements CrudDao<User> {
     }
 
     /**
-     * updated encrypted password
-     * @param password
+     * update password
+     * @param password encrypted password
      * @param id
      * @throws SQLException
      */

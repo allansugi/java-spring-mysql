@@ -1,14 +1,25 @@
 package com.example.demo.form.updateUser;
 
-public class UpdateUserPasswordForm extends UpdateUserForm{
-    private final String password;
+public class UpdateUserPasswordForm {
+    private String oldPassword;
+    private String newPassword;
 
-    public UpdateUserPasswordForm(String id, String password) {
-        super(id);
-        this.password = password;
+    public UpdateUserPasswordForm() {
     }
 
-    public String getPassword() {
-        return password;
+    public String getOldPassword() {
+        return oldPassword;
+    }
+
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
     }
 }
