@@ -1,0 +1,13 @@
+package com.example.demo.form.updateUser;
+
+public abstract class UpdateUserForm {
+    private final String id;
+
+    public UpdateUserForm(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+}

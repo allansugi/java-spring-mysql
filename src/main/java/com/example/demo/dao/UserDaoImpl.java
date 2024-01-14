@@ -80,6 +80,11 @@ public class UserDaoImpl implements CrudDao<User> {
         }
     }
 
+    /**
+     * update entire user account data, not used
+     * @param data
+     * @throws SQLException
+     */
     @Override
     public void update(User data) throws SQLException {
         try (Connection connection = getConnection()) {
@@ -92,5 +97,43 @@ public class UserDaoImpl implements CrudDao<User> {
         }
     }
 
+    /**
+     * update username
+     * @param username
+     * @param id
+     * @throws SQLException
+     */
+    public void updateUsername(String username, String id) throws SQLException {
+        try (Connection connection = getConnection()) {
+            PreparedStatement statement = connection.prepareStatement("UPDATE user SET username = ? where id = ?");
+            statement.setString(1, username);
+            statement.setString(2, id);
+            statement.execute();
+        }
+    }
+
+    public void updateEmail(String email, String id) throws SQLException {
+        try (Connection connection = getConnection()) {
+            PreparedStatement statement = connection.prepareStatement("UPDATE user SET username = ? where id = ?");
+            statement.setString(1, email);
+            statement.setString(2, id);
+            statement.execute();
+        }
+    }
+
+    /**
+     * updated encrypted password
+     * @param password
+     * @param id
+     * @throws SQLException
+     */
+    public void updatePassword(String password, String id) throws SQLException {
+        try (Connection connection = getConnection()) {
+            PreparedStatement statement = connection.prepareStatement("UPDATE user SET username = ? where id = ?");
+            statement.setString(1, password);
+            statement.setString(2, id);
+            statement.execute();
+        }
+    }
 
 }

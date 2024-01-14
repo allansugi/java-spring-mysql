@@ -1,21 +1,18 @@
 package com.example.demo.controller;
 
-import com.example.demo.dao.UserDaoImpl;
 import com.example.demo.exception.AuthenticationException;
 import com.example.demo.exception.DatabaseErrorException;
 import com.example.demo.form.UserLoginForm;
 import com.example.demo.form.UserRegisterForm;
-import com.example.demo.model.User;
+import com.example.demo.form.updateUser.UpdateUserEmailForm;
+import com.example.demo.form.updateUser.UpdateUserNameForm;
+import com.example.demo.form.updateUser.UpdateUserPasswordForm;
 import com.example.demo.service.UserServiceImpl;
+import com.example.demo.util.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.sql.SQLException;
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpHeaders;
 
 @RequestMapping("/api/user")
 @RestController
@@ -38,10 +35,28 @@ public class UserControllerImpl implements UserController {
     @PostMapping("/login")
     @Override
     public void login(@RequestBody UserLoginForm form) throws DatabaseErrorException, AuthenticationException {
-        Boolean authenticate = this.service.authenticate(form);
-        if (!authenticate) {
-            throw new AuthenticationException("incorrect email or password");
-        }
+        String token = this.service.authenticate(form);
+        HttpHeaders header = new HttpHeaders();
+        header.add("token", token);
+        return ResponseEntity
+    }
+
+    @PutMapping("/update/username")
+    @Override
+    public void updateUsername(UpdateUserNameForm form) throws DatabaseErrorException {
+        this.service.updateUsername(form.getId(), form.getUsername());
+    }
+
+    @PutMapping("/update/email")
+    @Override
+    public void updateUserEmail(UpdateUserEmailForm form) throws DatabaseErrorException {
+        this.service.updateEmail(form.getId(), form.getEmail());
+    }
+
+    @PutMapping("/update/password")
+    @Override
+    public void updateUserPassword(UpdateUserPasswordForm form) throws DatabaseErrorException {
+        this.service.updatePassword(form.getId(), form.getPassword());
     }
 
 }
