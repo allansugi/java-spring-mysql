@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.exception.AuthenticationException;
+import com.example.demo.exception.BadRequestException;
 import com.example.demo.exception.DatabaseErrorException;
 import com.example.demo.exception.RegisterArgumentException;
 import com.example.demo.form.UserLoginForm;
@@ -31,11 +32,8 @@ public class UserControllerImpl implements UserController {
     @PostMapping("/register")
     @ResponseBody
     @Override
-    public ResponseEntity<Response<String>> register(@RequestBody UserRegisterForm form) throws DatabaseErrorException, RegisterArgumentException {
-        service.addUser(form);
-        Response<String> response = new Response<>();
-        response.setSuccess(true);
-        response.setResponse("account registration success");
+    public ResponseEntity<Response<String>> register(@RequestBody UserRegisterForm form) throws DatabaseErrorException, BadRequestException,RegisterArgumentException {
+        Response<String> response = service.addUser(form);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -43,13 +41,14 @@ public class UserControllerImpl implements UserController {
     @ResponseBody
     @Override
     public ResponseEntity<Response<String>> login(@RequestBody UserLoginForm form, HttpServletResponse res) throws DatabaseErrorException, AuthenticationException {
-        String token = this.service.authenticate(form);
+        Response<String> response = this.service.authenticate(form);
+
+        String token = response.getResponse();
         Cookie cookie = new Cookie("token", token);
         cookie.setPath("/");
         res.addCookie(cookie);
-        Response<String> response = new Response<>();
-        response.setSuccess(true);
         response.setResponse("login success");
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -57,13 +56,7 @@ public class UserControllerImpl implements UserController {
     @ResponseBody
     @Override
     public ResponseEntity<Response<String>> updateUsername(@CookieValue("token") String token, @RequestBody UpdateUserNameForm form) throws DatabaseErrorException {
-        System.out.println("token: " + token);
-        String id = JWTUtil.verifyToken(token);
-        System.out.println("id: " + id);
-        this.service.updateUsername(id, form.getNewUsername());
-        Response<String> response = new Response<>();
-        response.setSuccess(true);
-        response.setResponse("username has been updated");
+        Response<String> response = this.service.updateUsername(token, form.getNewUsername());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -71,11 +64,7 @@ public class UserControllerImpl implements UserController {
     @ResponseBody
     @Override
     public ResponseEntity<Response<String>> updateUserEmail(@CookieValue("token") String token, @RequestBody UpdateUserEmailForm form) throws DatabaseErrorException {
-        String id = JWTUtil.verifyToken(token);
-        this.service.updateEmail(id, form.getNewEmail());
-        Response<String> response = new Response<>();
-        response.setSuccess(true);
-        response.setResponse("email has been updated");
+        Response<String> response = this.service.updateEmail(token, form.getNewEmail());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -83,11 +72,7 @@ public class UserControllerImpl implements UserController {
     @ResponseBody
     @Override
     public ResponseEntity<Response<String>> updateUserPassword(@CookieValue("token") String token, @RequestBody UpdateUserPasswordForm form) throws DatabaseErrorException {
-        String id = JWTUtil.verifyToken(token);
-        this.service.updatePassword(id, form.getNewPassword());
-        Response<String> response = new Response<>();
-        response.setSuccess(true);
-        response.setResponse("password has been updated");
+        Response<String> response = this.service.updatePassword(token, form.getNewPassword());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
