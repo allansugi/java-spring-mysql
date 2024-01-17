@@ -22,13 +22,13 @@ public interface UserController {
 
     @PutMapping("/update/username")
     @ResponseBody
-    ResponseEntity<Response<String>> updateUsername(@CookieValue("token") String token, UpdateUserNameForm form) throws DatabaseErrorException;
+    ResponseEntity<Response<String>> updateUsername(@CookieValue("token") String token, @RequestBody UpdateUserNameForm form) throws DatabaseErrorException;
 
     @PutMapping("/update/email")
     @ResponseBody
-    ResponseEntity<Response<String>> updateUserEmail(@CookieValue("token") String token, UpdateUserEmailForm form) throws DatabaseErrorException;
+    ResponseEntity<Response<String>> updateUserEmail(@CookieValue("token") String token, @RequestBody UpdateUserEmailForm form) throws DatabaseErrorException;
 
     @PutMapping("/update/password")
     @ResponseBody
-    ResponseEntity<Response<String>> updateUserPassword(@CookieValue("token") String token, UpdateUserPasswordForm form) throws DatabaseErrorException;
+    ResponseEntity<Response<String>> updateUserPassword(@CookieValue("token") String token, @RequestBody UpdateUserPasswordForm form) throws DatabaseErrorException;
 }
