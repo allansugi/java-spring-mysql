@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.exception.AuthenticationException;
 import com.example.demo.exception.DatabaseErrorException;
+import com.example.demo.exception.RegisterArgumentException;
 import com.example.demo.form.UserLoginForm;
 import com.example.demo.form.UserRegisterForm;
 import com.example.demo.form.updateUser.UpdateUserEmailForm;
@@ -30,7 +31,7 @@ public class UserControllerImpl implements UserController {
     @PostMapping("/register")
     @ResponseBody
     @Override
-    public ResponseEntity<Response<String>> register(@RequestBody UserRegisterForm form) throws DatabaseErrorException {
+    public ResponseEntity<Response<String>> register(@RequestBody UserRegisterForm form) throws DatabaseErrorException, RegisterArgumentException {
         service.addUser(form);
         Response<String> response = new Response<>();
         response.setSuccess(true);

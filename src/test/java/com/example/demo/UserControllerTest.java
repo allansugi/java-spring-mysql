@@ -3,6 +3,7 @@ package com.example.demo;
 import com.example.demo.controller.UserController;
 import com.example.demo.dao.UserDaoImpl;
 import com.example.demo.exception.AuthenticationException;
+import com.example.demo.exception.BadRequestException;
 import com.example.demo.form.UserLoginForm;
 import com.example.demo.form.UserRegisterForm;
 import com.example.demo.service.UserServiceImpl;
@@ -24,8 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -54,6 +54,16 @@ class UserControllerTest {
                 .content(mapper.writeValueAsString(firstUserRegister()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    public void register_fail_return_401() throws Exception {
+        doThrow(new BadRequestException()).when(service.addUser(any(UserRegisterForm.class)));
+        this.mockMvc.perform(post("/api/user/register")
+                        .content(mapper.writeValueAsString(firstUserRegister()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
     }
 
