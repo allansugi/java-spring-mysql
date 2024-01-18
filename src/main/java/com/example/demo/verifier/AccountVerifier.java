@@ -1,6 +1,6 @@
 package com.example.demo.verifier;
 
-public class RegisterVerifier {
+public class AccountVerifier {
     /**
      * @param password
      * @return true if password length >= 8, at least 1 uppercase letter, special character and number
@@ -30,5 +30,4 @@ public class RegisterVerifier {
                 && containSpecialCharacter
                 && password.length() >= 8;
     }
-
 }

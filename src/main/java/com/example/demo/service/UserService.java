@@ -11,7 +11,7 @@ import com.example.demo.response.Response;
 public interface UserService {
     Response<String> addUser(UserRegisterForm form) throws DatabaseErrorException, RegisterArgumentException, BadRequestException;
     Response<String> authenticate(UserLoginForm form) throws DatabaseErrorException, AuthenticationException;
-    Response<String> updatePassword(String token, String password) throws DatabaseErrorException;
+    Response<String> updatePassword(String token, String password) throws DatabaseErrorException, BadRequestException;
     Response<String> updateUsername(String token, String username) throws DatabaseErrorException;
-    Response<String> updateEmail(String token, String email) throws DatabaseErrorException;
+    Response<String> updateEmail(String token, String email) throws DatabaseErrorException, RegisterArgumentException;
 }

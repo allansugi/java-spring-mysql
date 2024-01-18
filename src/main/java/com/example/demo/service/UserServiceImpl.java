@@ -10,7 +10,6 @@ import com.example.demo.form.UserRegisterForm;
 import com.example.demo.model.User;
 import com.example.demo.response.Response;
 import com.example.demo.util.JWTUtil;
-import com.example.demo.verifier.RegisterVerifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
@@ -35,6 +34,51 @@ public class UserServiceImpl implements UserService {
         return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
+    private Boolean validEmail(String email) throws SQLException {
+        List<User> users = this.dao.findAll();
+        for (User user: users) {
+            if (user.getEmail().equals(email)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * requirement:
+     * minimum password length is 8
+     * have at least 1 uppercase and 1 lowercase letter
+     * have at least 1 number
+     * have at least 1 special character
+     * @param password password
+     * @return true if password meet the requirement, otherwise false
+     */
+    private Boolean validPassword(String password) {
+        boolean containSpecialCharacter = false;
+        boolean containNumber = false;
+        boolean containUpper = false;
+        boolean containLower = false;
+
+        for (char c : password.toCharArray()) {
+            if (Character.isDigit(c)) {
+                containNumber = true;
+            } else if (Character.isUpperCase(c)) {
+                containUpper = true;
+            } else if (Character.isLowerCase(c)) {
+                containLower = true;
+            } else {
+                containSpecialCharacter = true;
+            }
+        }
+
+        // Ensure that at least one character from each category is present
+        return containLower
+                && containUpper
+                && containNumber
+                && containSpecialCharacter
+                && password.length() >= 8;
+    }
+
     /**
      * @param form register form
      * @return response stating registration successful
@@ -45,26 +89,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public Response<String> addUser(UserRegisterForm form) throws DatabaseErrorException, RegisterArgumentException, BadRequestException {
         try {
-            if (!RegisterVerifier.validPasswordStrength(form.getPassword())) {
+            if (!validPassword(form.getPassword())) {
                 throw new BadRequestException("Password not met the requirement");
+            } else if (!validEmail(form.getEmail())) {
+                throw new RegisterArgumentException("same email exist");
+            } else {
+                User user = convertToData(form);
+                user.setPassword(encryptPassword(user.getPassword()));
+
+                this.dao.store(user);
+
+                Response<String> response = new Response<>();
+                response.setSuccess(true);
+                response.setResponse("registration successful");
+                return response;
             }
-
-            List<User> users = this.dao.findAll();
-            for (User user: users) {
-                if (user.getEmail().equals(form.getEmail())) {
-                    throw new RegisterArgumentException("same email exist");
-                }
-            }
-
-            User user = convertToData(form);
-            user.setPassword(encryptPassword(user.getPassword()));
-
-            this.dao.store(user);
-
-            Response<String> response = new Response<>();
-            response.setSuccess(true);
-            response.setResponse("registration successful");
-            return response;
         } catch (SQLException e) {
             throw new DatabaseErrorException(e);
         }
@@ -97,27 +136,44 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    /**
+     * @param token token from cookie
+     * @param password new password
+     * @return successful response password updated
+     * @throws DatabaseErrorException database error 505
+     * @throws BadRequestException inadequate password requirement error 400
+     */
     @Override
-    public Response<String> updatePassword(String token, String password) throws DatabaseErrorException {
+    public Response<String> updatePassword(String token, String password) throws DatabaseErrorException, BadRequestException {
         try {
-            String id = JWTUtil.verifyToken(token);
-            this.dao.updatePassword(encryptPassword(password), id);
-            Response<String> response = new Response<>();
-            response.setSuccess(false);
-            response.setResponse("password updated");
-            return response;
+            if (!validPassword(password)) {
+                throw new BadRequestException("Password not met the requirement");
+            } else {
+                String id = JWTUtil.verifyToken(token);
+                this.dao.updatePassword(encryptPassword(password), id);
+                Response<String> response = new Response<>();
+                response.setSuccess(true);
+                response.setResponse("password updated");
+                return response;
+            }
         } catch (SQLException e) {
             throw new DatabaseErrorException();
         }
     }
 
+    /**
+     * @param token token from cookie
+     * @param username new username
+     * @return successful response username updated
+     * @throws DatabaseErrorException database error 500
+     */
     @Override
     public Response<String> updateUsername(String token, String username) throws DatabaseErrorException {
         try {
             String id = JWTUtil.verifyToken(token);
             this.dao.updateUsername(username, id);
             Response<String> response = new Response<>();
-            response.setSuccess(false);
+            response.setSuccess(true);
             response.setResponse("username updated");
             return response;
         } catch (SQLException e) {
@@ -125,13 +181,23 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    /**
+     * @param token token from cookie
+     * @param email new email
+     * @return success response email updated
+     * @throws DatabaseErrorException database error 500
+     * @throws RegisterArgumentException same email error 409
+     */
     @Override
-    public Response<String> updateEmail(String token, String email) throws DatabaseErrorException {
+    public Response<String> updateEmail(String token, String email) throws DatabaseErrorException, RegisterArgumentException {
         try {
+            if (!validEmail(email)) {
+                throw new RegisterArgumentException("same email exist");
+            }
             String id = JWTUtil.verifyToken(token);
             this.dao.updateEmail(email, id);
             Response<String> response = new Response<>();
-            response.setSuccess(false);
+            response.setSuccess(true);
             response.setResponse("email updated");
             return response;
         } catch (SQLException e) {

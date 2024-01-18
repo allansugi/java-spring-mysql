@@ -32,7 +32,7 @@ public class UserControllerImpl implements UserController {
     @PostMapping("/register")
     @ResponseBody
     @Override
-    public ResponseEntity<Response<String>> register(@RequestBody UserRegisterForm form) throws DatabaseErrorException, BadRequestException,RegisterArgumentException {
+    public ResponseEntity<Response<String>> register(@RequestBody UserRegisterForm form) throws DatabaseErrorException, BadRequestException, RegisterArgumentException {
         Response<String> response = service.addUser(form);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -55,7 +55,7 @@ public class UserControllerImpl implements UserController {
     @PutMapping("/update/username")
     @ResponseBody
     @Override
-    public ResponseEntity<Response<String>> updateUsername(@CookieValue("token") String token, @RequestBody UpdateUserNameForm form) throws DatabaseErrorException {
+    public ResponseEntity<Response<String>> updateUsername(@CookieValue("token") String token, @RequestBody UpdateUserNameForm form) throws DatabaseErrorException, BadRequestException, RegisterArgumentException {
         Response<String> response = this.service.updateUsername(token, form.getNewUsername());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -63,7 +63,7 @@ public class UserControllerImpl implements UserController {
     @PutMapping("/update/email")
     @ResponseBody
     @Override
-    public ResponseEntity<Response<String>> updateUserEmail(@CookieValue("token") String token, @RequestBody UpdateUserEmailForm form) throws DatabaseErrorException {
+    public ResponseEntity<Response<String>> updateUserEmail(@CookieValue("token") String token, @RequestBody UpdateUserEmailForm form) throws DatabaseErrorException, RegisterArgumentException {
         Response<String> response = this.service.updateEmail(token, form.getNewEmail());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -71,7 +71,7 @@ public class UserControllerImpl implements UserController {
     @PutMapping("/update/password")
     @ResponseBody
     @Override
-    public ResponseEntity<Response<String>> updateUserPassword(@CookieValue("token") String token, @RequestBody UpdateUserPasswordForm form) throws DatabaseErrorException {
+    public ResponseEntity<Response<String>> updateUserPassword(@CookieValue("token") String token, @RequestBody UpdateUserPasswordForm form) throws DatabaseErrorException, BadRequestException, RegisterArgumentException {
         Response<String> response = this.service.updatePassword(token, form.getNewPassword());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

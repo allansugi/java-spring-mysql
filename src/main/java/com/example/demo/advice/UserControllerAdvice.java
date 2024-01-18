@@ -1,6 +1,8 @@
 package com.example.demo.advice;
+import com.example.demo.exception.AuthenticationException;
 import com.example.demo.exception.BadRequestException;
 import com.example.demo.exception.DatabaseErrorException;
+import com.example.demo.exception.RegisterArgumentException;
 import com.example.demo.response.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,17 +21,37 @@ public class UserControllerAdvice {
         Response<String> response = new Response<>();
         response.setSuccess(false);
         response.setResponse(ex.getMessage());
-        return ResponseEntity.badRequest().body(response);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DatabaseErrorException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public ResponseEntity<Response<String>> handleDatabaseErrorException(DatabaseErrorException ex) {
         Response<String> response = new Response<>();
         response.setSuccess(false);
         response.setResponse(ex.getMessage());
-        return ResponseEntity.badRequest().body(response);
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(RegisterArgumentException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseBody
+    public ResponseEntity<Response<String>> handleRegisterArgumentException(RegisterArgumentException ex) {
+        Response<String> response = new Response<>();
+        response.setSuccess(false);
+        response.setResponse(ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    public ResponseEntity<Response<String>> handleAuthenticationException(AuthenticationException ex) {
+        Response<String> response = new Response<>();
+        response.setSuccess(false);
+        response.setResponse(ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 
 }

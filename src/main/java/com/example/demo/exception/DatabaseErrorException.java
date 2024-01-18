@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.sql.SQLException;
 
-@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "database connection error")
 public class DatabaseErrorException extends SQLException {
     public DatabaseErrorException(String reason, String SQLState, int vendorCode) {
         super(reason, SQLState, vendorCode);
