@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
      * have at least 1 number
      * have at least 1 special character
      * @param password password
-     * @return true if password meet the requirement, otherwise false
+     * @return true if password meets the requirement, otherwise false
      */
     private Boolean validPassword(String password) {
         boolean containSpecialCharacter = false;
@@ -83,14 +83,14 @@ public class UserServiceImpl implements UserService {
      * @param form register form
      * @return response stating registration successful
      * @throws DatabaseErrorException    if database connection has an error
-     * @throws RegisterArgumentException if email exists in the database
-     * @throws BadRequestException       if parameter not met the requirement
+     * @throws RegisterArgumentException if account with same email exists in the database
+     * @throws BadRequestException       if parameter not meet the requirement
      */
     @Override
     public Response<String> addUser(UserRegisterForm form) throws DatabaseErrorException, RegisterArgumentException, BadRequestException {
         try {
             if (!validPassword(form.getPassword())) {
-                throw new BadRequestException("Password not met the requirement");
+                throw new BadRequestException("Password not meet the requirement");
             } else if (!validEmail(form.getEmail())) {
                 throw new RegisterArgumentException("same email exist");
             } else {
@@ -111,7 +111,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * @param form login form
-     * @return JWT token
+     * @return success response with JWT token
      * @throws DatabaseErrorException  if there's an error in the database
      * @throws AuthenticationException if no account found
      */
