@@ -1,8 +1,6 @@
 package com.example.demo.model;
 
 import com.example.demo.form.AccountForm;
-import com.example.demo.form.UserRegisterForm;
-
 import java.util.UUID;
 
 public class Account {

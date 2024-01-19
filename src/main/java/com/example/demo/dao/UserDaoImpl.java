@@ -25,7 +25,6 @@ public class UserDaoImpl implements CrudDao<User> {
 
     @Override
     public void store(User data) throws SQLException {
-        // TODO Auto-generated method stub
         try (Connection connection = DriverManager.getConnection(url, username, password)) {
             PreparedStatement statement = connection.prepareStatement(storeQry);
             statement.setString(1, data.getId());
@@ -79,7 +78,7 @@ public class UserDaoImpl implements CrudDao<User> {
             statement.execute();
         }
     }
-
+    
     @Override
     public void update(User data) throws SQLException {
         try (Connection connection = getConnection()) {
@@ -88,9 +87,59 @@ public class UserDaoImpl implements CrudDao<User> {
             statement.setString(2, data.getEmail());
             statement.setString(3, data.getPassword());
             statement.setString(4, data.getId());
-            statement.execute();
+            statement.executeUpdate();
         }
     }
 
+    /**
+     * update username
+     * @param username
+     * @param id
+     * @return number of rows updated, either 1 or 0
+     * @throws SQLException
+     */
+    public int updateUsername(String username, String id) throws SQLException {
+        try (Connection connection = getConnection()) {
+            System.out.println("username: " + username);
+            System.out.println("id: " + id);
+            PreparedStatement statement = connection.prepareStatement("UPDATE user SET username = ? WHERE id = ?");
+            statement.setString(1, username);
+            statement.setString(2, id);
+            return statement.executeUpdate();
+        }
+    }
+
+    /**
+     * update email
+     * @param email
+     * @param id
+     * @return number of rows updated, either 1 or 0
+     * @throws SQLException
+     */
+    public int updateEmail(String email, String id) throws SQLException {
+        try (Connection connection = getConnection()) {
+            PreparedStatement statement = connection.prepareStatement("UPDATE user SET email = ? WHERE id = ?");
+            statement.setString(1, email);
+            statement.setString(2, id);
+            return statement.executeUpdate();
+        }
+    }
+
+
+    /**
+     * update password with encrypted password
+     * @param password
+     * @param id
+     * @return number of rows updated, either 1 or 0
+     * @throws SQLException
+     */
+    public int updatePassword(String password, String id) throws SQLException {
+        try (Connection connection = getConnection()) {
+            PreparedStatement statement = connection.prepareStatement("UPDATE user SET password = ? where id = ?");
+            statement.setString(1, password);
+            statement.setString(2, id);
+            return statement.executeUpdate();
+        }
+    }
 
 }
