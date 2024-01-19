@@ -12,6 +12,8 @@ import com.example.demo.response.Response;
 import com.example.demo.util.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
@@ -20,10 +22,12 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
     private final UserDaoImpl dao;
+    private final JWTUtil util;
 
     @Autowired
-    public UserServiceImpl(UserDaoImpl dao) {
+    public UserServiceImpl(UserDaoImpl dao, JWTUtil util) {
         this.dao = dao;
+        this.util = util;
     }
 
     private User convertToData(UserRegisterForm form) {
@@ -31,13 +35,29 @@ public class UserServiceImpl implements UserService {
     }
 
     private String encryptPassword(String password) {
-        return BCrypt.hashpw(password, BCrypt.gensalt());
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        return BCrypt.hashpw(password, encoder.encode(password));
+    }
+
+    private Boolean passwordMatches(String password, String hashedPassword) {
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.matches(password, hashedPassword);
     }
 
     private Boolean validEmail(String email) throws SQLException {
         List<User> users = this.dao.findAll();
         for (User user: users) {
             if (user.getEmail().equals(email)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private Boolean validUsername(String username) throws SQLException {
+        List<User> users = this.dao.findAll();
+        for (User user: users) {
+            if (user.getUsername().equals(username)) {
                 return false;
             }
         }
@@ -123,10 +143,10 @@ public class UserServiceImpl implements UserService {
             List<User> validUser = users.stream()
                     .filter(u -> u.getEmail().equals(valId))
                     .toList();
-            if (!validUser.isEmpty() && BCrypt.checkpw(form.getPassword(), validUser.get(0).getPassword())) {
+            if (!validUser.isEmpty() && passwordMatches(form.getPassword(), validUser.get(0).getPassword())) {
                 Response<String> response = new Response<>();
                 response.setSuccess(true);
-                response.setResponse(JWTUtil.createToken(validUser.get(0).getId()));
+                response.setResponse(this.util.createToken(validUser.get(0).getId()));
                 return response;
             } else {
                 throw new AuthenticationException("Incorrect email or password");
@@ -149,7 +169,7 @@ public class UserServiceImpl implements UserService {
             if (!validPassword(password)) {
                 throw new BadRequestException("Password not met the requirement");
             } else {
-                String id = JWTUtil.verifyToken(token);
+                String id = this.util.verifyToken(token);
                 this.dao.updatePassword(encryptPassword(password), id);
                 Response<String> response = new Response<>();
                 response.setSuccess(true);
@@ -170,7 +190,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Response<String> updateUsername(String token, String username) throws DatabaseErrorException {
         try {
-            String id = JWTUtil.verifyToken(token);
+            if (!validUsername(username)) {
+                throw new RegisterArgumentException("same username exist");
+            }
+            String id = this.util.verifyToken(token);
             this.dao.updateUsername(username, id);
             Response<String> response = new Response<>();
             response.setSuccess(true);
@@ -194,7 +217,7 @@ public class UserServiceImpl implements UserService {
             if (!validEmail(email)) {
                 throw new RegisterArgumentException("same email exist");
             }
-            String id = JWTUtil.verifyToken(token);
+            String id = this.util.verifyToken(token);
             this.dao.updateEmail(email, id);
             Response<String> response = new Response<>();
             response.setSuccess(true);
