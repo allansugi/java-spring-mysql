@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dao.AccountDaoImpl;
 import com.example.demo.exception.DatabaseErrorException;
+import com.example.demo.exception.NoAccountFoundException;
 import com.example.demo.form.AccountForm;
 import com.example.demo.model.Account;
 import com.example.demo.response.Response;
@@ -60,10 +61,13 @@ public class AccountServiceImpl implements AccountService{
     }
 
     @Override
-    public Response<List<Account>> findUserAccounts(String userId) throws DatabaseErrorException {
+    public Response<List<Account>> findUserAccounts(String userId) throws DatabaseErrorException, NoAccountFoundException {
         try {
             List<Account> accounts = this.dao.findAll();
             List<Account> userAccounts = accounts.stream().filter(a -> a.getUserId().equals(userId)).toList();
+            if (userAccounts.isEmpty()) {
+                throw new NoAccountFoundException("no accounts found for that user");
+            }
             Response<List<Account>> response = new Response<>();
             response.setSuccess(true);
             response.setResponse(userAccounts);
