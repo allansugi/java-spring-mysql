@@ -11,8 +11,10 @@ import java.util.List;
 
 @Service
 public interface AccountService {
-    public Response<String> addAccount(AccountForm form) throws DatabaseErrorException;
-    public Response<String> updateAccount(Account account) throws DatabaseErrorException;
-    public Response<String> deleteAccount(String accountId) throws DatabaseErrorException;
-    public Response<List<Account>> findUserAccounts(String userId) throws DatabaseErrorException, NoAccountFoundException;
+    public Response<String> addAccount(String token, AccountForm form) throws DatabaseErrorException;
+
+    public Response<String> updateAccount(String token, Account account) throws DatabaseErrorException;
+    public Response<String> deleteAccount(String token, String accountId) throws DatabaseErrorException;
+
+    Response<List<Account>> findUserAccounts(String token) throws DatabaseErrorException, NoAccountFoundException;
 }

@@ -19,13 +19,13 @@ public class Account {
         this.account_password = account_password;
     }
 
-    public Account(AccountForm form) {
+    public Account(String userId, AccountForm form) {
         UUID uuid = UUID.randomUUID();
-        setId(uuid.toString());
-        setUserId(form.getUserId());
-        setAccount_username(form.getAccount_username());
-        setAccount_name(form.getAccount_name());
-        setAccount_password(form.getAccount_password());
+        this.id = uuid.toString();
+        this.userId = userId;
+        this.account_username = form.getAccount_username();
+        this.account_name = (form.getAccount_name());
+        this.account_password = form.getAccount_password();
     }
 
     public String getAccount_name() {
