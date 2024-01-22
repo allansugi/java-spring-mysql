@@ -1,5 +1,6 @@
 package com.example.demo.account;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -18,6 +19,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import com.example.demo.controller.AccountController;
+import com.example.demo.exception.NoAccountFoundException;
 import com.example.demo.form.AccountForm;
 import com.example.demo.model.Account;
 import com.example.demo.response.Response;
@@ -131,4 +133,22 @@ public class AccountControllerTest {
                     .andExpect(status().isOk());
     }
     
+    @Test
+    public void findUserAccounts_fails_return_404() throws Exception {
+        // assume there are accounts found
+        List<Account> accounts = new ArrayList<>();
+        Response<List<Account>> response = new Response<>();
+        response.setSuccess(true);
+        response.setResponse(accounts);
+
+        String userId = UUID.randomUUID().toString();
+        String token = util.createToken(userId);
+        Cookie cookie = new Cookie("token", token);
+
+        doThrow(new NoAccountFoundException()).when(service).findUserAccounts(token);
+
+        this.mockMvc.perform(get("/api/account/find/accounts")
+                    .cookie(cookie))
+                    .andExpect(status().isNotFound());
+    }
 }
