@@ -1,8 +1,5 @@
 package com.example.demo.advice;
-import com.example.demo.exception.AuthenticationException;
-import com.example.demo.exception.BadRequestException;
-import com.example.demo.exception.DatabaseErrorException;
-import com.example.demo.exception.RegisterArgumentException;
+import com.example.demo.exception.*;
 import com.example.demo.response.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +49,16 @@ public class GlobalControllerException {
         response.setSuccess(false);
         response.setResponse(ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(NoAccountFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public ResponseEntity<Response<String>> handleNotFoundException(NoAccountFoundException ex) {
+        Response<String> response = new Response<>();
+        response.setSuccess(false);
+        response.setResponse(ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
 }

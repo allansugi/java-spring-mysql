@@ -29,5 +29,5 @@ docker compose down
 ### UML Diagram
 coming soon
 
-### MySQL Diagram
+### Database Diagram
 coming soon

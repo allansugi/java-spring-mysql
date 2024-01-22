@@ -16,9 +16,9 @@ public class JWTUtil {
     }
 
     /**
-     * expiry for valid token is for 1h
+     * Important: expiry for valid token is for 1h
      * @param token from header
-     * @return decoded token which is id
+     * @return decoded token which is user id
      */
     public String verifyToken(String token) {
         Algorithm algorithm = Algorithm.HMAC512(secret);

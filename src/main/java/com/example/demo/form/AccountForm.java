@@ -1,7 +1,6 @@
 package com.example.demo.form;
 
 public class AccountForm {
-    private String userId;
     private String account_name;
     // can be username or email
     private String account_username;
@@ -29,13 +28,5 @@ public class AccountForm {
 
     public void setAccount_password(String account_password) {
         this.account_password = account_password;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
     }
 }

@@ -2,8 +2,11 @@ package com.example.demo.service;
 
 import com.example.demo.dao.AccountDaoImpl;
 import com.example.demo.exception.DatabaseErrorException;
+import com.example.demo.exception.NoAccountFoundException;
 import com.example.demo.form.AccountForm;
 import com.example.demo.model.Account;
+import com.example.demo.response.Response;
+import com.example.demo.util.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,46 +14,81 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Service
-public class AccountServiceImpl implements AccountService{
+public class AccountServiceImpl implements AccountService {
     private final AccountDaoImpl dao;
+    private final JWTUtil util;
 
     @Autowired
-    public AccountServiceImpl(AccountDaoImpl dao) {
+    public AccountServiceImpl(AccountDaoImpl dao, JWTUtil util) {
         this.dao = dao;
+        this.util = util;
     }
+    
     @Override
-    public void addAccount(AccountForm form) throws DatabaseErrorException {
+    public Response<String> addAccount(String token, AccountForm form) throws DatabaseErrorException {
         try {
-            Account account = new Account(form);
+            String userId = util.verifyToken(token);
+            Account account = new Account(userId, form);
             this.dao.store(account);
+
+            Response<String> response = new Response<>();
+            response.setSuccess(true);
+            response.setResponse("account added");
+
+            return response;
         } catch (SQLException e) {
             throw new DatabaseErrorException();
         }
     }
 
     @Override
-    public void updateAccount(Account account) throws DatabaseErrorException {
+    public Response<String> updateAccount(String token, Account account) throws DatabaseErrorException {
         try {
+            String userId = util.verifyToken(token);
             this.dao.update(account);
+
+            Response<String> response = new Response<>();
+            response.setSuccess(true);
+            response.setResponse("account information updated");
+
+            return response;
         } catch (SQLException e) {
             throw new DatabaseErrorException();
         }
     }
 
     @Override
-    public void deleteAccount(String accountId) throws DatabaseErrorException {
+    public Response<String> deleteAccount(String token, String accountId) throws DatabaseErrorException {
         try {
+            String userId = util.verifyToken(token);
             this.dao.delete(accountId);
+
+            Response<String> response = new Response<>();
+            response.setSuccess(true);
+            response.setResponse("account deleted");
+
+            return response;
         } catch (SQLException e) {
             throw new DatabaseErrorException();
         }
     }
 
     @Override
-    public List<Account> findUserAccounts(String userId) throws DatabaseErrorException {
+    public Response<List<Account>> findUserAccounts(String token) throws DatabaseErrorException, NoAccountFoundException {
         try {
+            String userId = util.verifyToken(token);
             List<Account> accounts = this.dao.findAll();
-            return accounts.stream().filter(a -> a.getUserId().equals(userId)).toList();
+            List<Account> userAccounts = accounts.stream().filter(a -> a.getUserId().equals(userId)).toList();
+
+            if (userAccounts.isEmpty()) {
+                throw new NoAccountFoundException("no accounts found for that user");
+            }
+
+            Response<List<Account>> response = new Response<>();
+            response.setSuccess(true);
+            response.setResponse(userAccounts);
+
+            return response;
         } catch (SQLException e) {
             throw new DatabaseErrorException();
         }
