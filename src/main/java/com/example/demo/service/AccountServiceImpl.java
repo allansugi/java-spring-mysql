@@ -23,6 +23,7 @@ public class AccountServiceImpl implements AccountService {
         this.dao = dao;
         this.util = util;
     }
+    
     @Override
     public Response<String> addAccount(String token, AccountForm form) throws DatabaseErrorException {
         try {
@@ -32,7 +33,7 @@ public class AccountServiceImpl implements AccountService {
 
             Response<String> response = new Response<>();
             response.setSuccess(true);
-            response.setResponse("account has been added");
+            response.setResponse("account added");
 
             return response;
         } catch (SQLException e) {

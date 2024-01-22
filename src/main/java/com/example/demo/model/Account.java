@@ -11,6 +11,10 @@ public class Account {
     private String account_username;
     private String account_password;
 
+    public Account() {
+        // Default constructor
+    }
+
     public Account(String id, String userId, String account_name, String account_username, String account_password) {
         this.id = id;
         this.userId = userId;
@@ -24,7 +28,7 @@ public class Account {
         this.id = uuid.toString();
         this.userId = userId;
         this.account_username = form.getAccount_username();
-        this.account_name = (form.getAccount_name());
+        this.account_name = form.getAccount_name();
         this.account_password = form.getAccount_password();
     }
 
