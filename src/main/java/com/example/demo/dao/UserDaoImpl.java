@@ -4,28 +4,30 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.demo.db.DBConnectionProvider;
 import com.example.demo.model.User;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class UserDaoImpl implements CrudDao<User> {
 
-    private final String url = "jdbc:mysql://db:3306/app";
-    private final String username = "root";
-    private final String password = "password";
+    private DBConnectionProvider connectionProvider;
     private final String storeQry = "INSERT INTO user (id, username, email, password) VALUES (?, ?, ?, ?)";
     private final String findAllQry = "SELECT * FROM user";
     private final String deleteQry = "DELETE FROM user where id = ?";
     private final String findIdQry = "SELECT * FROM user WHERE id = ?";
     private final String updateQry = "UPDATE user SET username = ?, email = ?, password = ? where id = ?";
 
-    private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(url, username, password);
+    @Autowired
+    public UserDaoImpl(DBConnectionProvider connectionProvider) {
+        this.connectionProvider = connectionProvider;
     }
 
     @Override
     public void store(User data) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+        try (Connection connection = connectionProvider.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(storeQry);
             statement.setString(1, data.getId());
             statement.setString(2, data.getUsername());
@@ -37,8 +39,7 @@ public class UserDaoImpl implements CrudDao<User> {
 
     @Override
     public User findById(String id) throws SQLException {
-        // TODO Auto-generated method stub
-        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+        try (Connection connection = connectionProvider.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(findIdQry);
             statement.setString(1, id);
             ResultSet rs = statement.executeQuery();
@@ -56,9 +57,8 @@ public class UserDaoImpl implements CrudDao<User> {
 
     @Override
     public List<User> findAll() throws SQLException {
-        // TODO Auto-generated method stub
         List<User> users = new ArrayList<>();
-        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+        try (Connection connection = connectionProvider.getConnection()) {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(findAllQry);
             while (rs.next()) {
@@ -72,7 +72,7 @@ public class UserDaoImpl implements CrudDao<User> {
 
     @Override
     public void delete(String id) throws SQLException {
-        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+        try (Connection connection = connectionProvider.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(deleteQry);
             statement.setString(1, id);
             statement.execute();
@@ -81,7 +81,7 @@ public class UserDaoImpl implements CrudDao<User> {
     
     @Override
     public void update(User data) throws SQLException {
-        try (Connection connection = getConnection()) {
+        try (Connection connection = connectionProvider.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(updateQry);
             statement.setString(1, data.getUsername());
             statement.setString(2, data.getEmail());
@@ -99,7 +99,7 @@ public class UserDaoImpl implements CrudDao<User> {
      * @throws SQLException
      */
     public int updateUsername(String username, String id) throws SQLException {
-        try (Connection connection = getConnection()) {
+        try (Connection connection = connectionProvider.getConnection()) {
             System.out.println("username: " + username);
             System.out.println("id: " + id);
             PreparedStatement statement = connection.prepareStatement("UPDATE user SET username = ? WHERE id = ?");
@@ -117,14 +117,13 @@ public class UserDaoImpl implements CrudDao<User> {
      * @throws SQLException
      */
     public int updateEmail(String email, String id) throws SQLException {
-        try (Connection connection = getConnection()) {
+        try (Connection connection = connectionProvider.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("UPDATE user SET email = ? WHERE id = ?");
             statement.setString(1, email);
             statement.setString(2, id);
             return statement.executeUpdate();
         }
     }
-
 
     /**
      * update password with encrypted password
@@ -134,7 +133,7 @@ public class UserDaoImpl implements CrudDao<User> {
      * @throws SQLException
      */
     public int updatePassword(String password, String id) throws SQLException {
-        try (Connection connection = getConnection()) {
+        try (Connection connection = connectionProvider.getConnection()) {
             PreparedStatement statement = connection.prepareStatement("UPDATE user SET password = ? where id = ?");
             statement.setString(1, password);
             statement.setString(2, id);
