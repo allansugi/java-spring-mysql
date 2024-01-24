@@ -24,6 +24,11 @@ To stop the application while keeping the data in database, remove `-v` flag
 docker compose down
 ```
 
+To run test for the application
+```bash
+./mvnw clean test
+```
+
 ## Diagrams
 
 ### UML Diagram
@@ -31,3 +36,9 @@ coming soon
 
 ### Database Diagram
 coming soon
+
+## Testing
+### Framework/libraries
+- [Junit 5](https://junit.org/junit5/)
+- [Mockito](https://site.mockito.org/)
+- [Testcontainer](https://testcontainers.com/)
