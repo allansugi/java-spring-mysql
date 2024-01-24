@@ -9,4 +9,5 @@ public interface CrudDao<T> {
     public List<T> findAll() throws SQLException;
     public void delete(String id) throws SQLException;
     public void update(T data) throws SQLException;
+    public void deleteAll() throws SQLException;
 }

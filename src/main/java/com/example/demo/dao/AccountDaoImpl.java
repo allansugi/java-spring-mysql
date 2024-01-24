@@ -60,7 +60,7 @@ public class AccountDaoImpl implements CrudDao<Account> {
                 );
             }
 
-             return null;
+            return null;
         }
     }
 
@@ -106,5 +106,12 @@ public class AccountDaoImpl implements CrudDao<Account> {
         }
     }
 
+    @Override
+    public void deleteAll() throws SQLException {
+        try (Connection connection = connectionProvider.getConnection()) {
+            Statement stmt = connection.createStatement();
+            stmt.executeQuery("DELETE FROM account");
+        }
+    }
 
 }

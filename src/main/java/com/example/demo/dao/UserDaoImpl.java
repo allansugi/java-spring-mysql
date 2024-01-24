@@ -27,7 +27,7 @@ public class UserDaoImpl implements CrudDao<User> {
 
     @Override
     public void store(User data) throws SQLException {
-        try (Connection connection = connectionProvider.getConnection()) {
+        try (Connection connection = this.connectionProvider.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(storeQry);
             statement.setString(1, data.getId());
             statement.setString(2, data.getUsername());
@@ -39,7 +39,7 @@ public class UserDaoImpl implements CrudDao<User> {
 
     @Override
     public User findById(String id) throws SQLException {
-        try (Connection connection = connectionProvider.getConnection()) {
+        try (Connection connection = this.connectionProvider.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(findIdQry);
             statement.setString(1, id);
             ResultSet rs = statement.executeQuery();
@@ -58,7 +58,7 @@ public class UserDaoImpl implements CrudDao<User> {
     @Override
     public List<User> findAll() throws SQLException {
         List<User> users = new ArrayList<>();
-        try (Connection connection = connectionProvider.getConnection()) {
+        try (Connection connection = this.connectionProvider.getConnection()) {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(findAllQry);
             while (rs.next()) {
@@ -72,7 +72,7 @@ public class UserDaoImpl implements CrudDao<User> {
 
     @Override
     public void delete(String id) throws SQLException {
-        try (Connection connection = connectionProvider.getConnection()) {
+        try (Connection connection = this.connectionProvider.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(deleteQry);
             statement.setString(1, id);
             statement.execute();
@@ -81,7 +81,7 @@ public class UserDaoImpl implements CrudDao<User> {
     
     @Override
     public void update(User data) throws SQLException {
-        try (Connection connection = connectionProvider.getConnection()) {
+        try (Connection connection = this.connectionProvider.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(updateQry);
             statement.setString(1, data.getUsername());
             statement.setString(2, data.getEmail());
@@ -93,10 +93,10 @@ public class UserDaoImpl implements CrudDao<User> {
 
     /**
      * update username
-     * @param username
-     * @param id
+     * @param username new username
+     * @param id user id
      * @return number of rows updated, either 1 or 0
-     * @throws SQLException
+     * @throws SQLException database connection error
      */
     public int updateUsername(String username, String id) throws SQLException {
         try (Connection connection = connectionProvider.getConnection()) {
@@ -138,6 +138,14 @@ public class UserDaoImpl implements CrudDao<User> {
             statement.setString(1, password);
             statement.setString(2, id);
             return statement.executeUpdate();
+        }
+    }
+
+    @Override
+    public void deleteAll() throws SQLException {
+        try (Connection connection = connectionProvider.getConnection()) {
+            Statement stmt = connection.createStatement();
+            stmt.executeUpdate("DELETE FROM user");
         }
     }
 
