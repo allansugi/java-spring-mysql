@@ -41,4 +41,3 @@ coming soon
 ### Framework/libraries
 - [Junit 5](https://junit.org/junit5/)
 - [Mockito](https://site.mockito.org/)
-- [Testcontainer](https://testcontainers.com/)
