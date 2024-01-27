@@ -1,50 +1,28 @@
 package com.example.demo.user;
 
 
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import com.example.demo.dao.UserDaoImpl;
+import com.example.demo.model.User;
+import org.junit.Before;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.File;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.DockerComposeContainer;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.MySQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-
-import com.example.demo.dao.UserDaoImpl;
-import com.example.demo.db.DBConnectionProvider;
-import com.example.demo.model.User;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-@Testcontainers
+@SpringBootTest
 public class UserDaoTest {
 
-     @Container
-     private final MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0")
-     .withExposedPorts(3306)
-     .withEnv("MYSQL_ROOT_PASSWORD", "password")
-     .withEnv("MYSQL_DATABASE", "app")
-     .withInitScript("schema.sql");
-
+    @Autowired
     private UserDaoImpl dao;
 
     @BeforeEach
-    public void BeforeEach() {
-        this.dao = new UserDaoImpl(
-            new DBConnectionProvider(
-                mysql.getJdbcUrl(),
-                mysql.getUsername(),
-                mysql.getPassword()
-            )
-        );
+    public void beforeEach() throws Exception {
+        this.dao.deleteAll();
     }
 
     @Test
@@ -139,4 +117,8 @@ public class UserDaoTest {
         assertEquals(user.getEmail(), newEmail);
     }
 
+    @AfterEach
+    public void afterEach() throws Exception {
+        this.dao.deleteAll();
+    }
 }

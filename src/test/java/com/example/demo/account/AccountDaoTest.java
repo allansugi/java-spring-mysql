@@ -1,15 +1,13 @@
 package com.example.demo.account;
 
 import com.example.demo.dao.AccountDaoImpl;
-import com.example.demo.dao.UserDaoImpl;
-import com.example.demo.db.DBConnectionProvider;
 import com.example.demo.model.Account;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.MySQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,27 +21,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * from MySQL schema, we left it null for easier unit testing.
  * userId will be included for Integration testing
  */
-@Testcontainers
+@SpringBootTest
 public class AccountDaoTest {
-    @Container
-    private final MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0")
-            .withExposedPorts(3306)
-            .withEnv("MYSQL_ROOT_PASSWORD", "password")
-            .withEnv("MYSQL_DATABASE", "app")
-            .withInitScript("schema.sql");
 
+    @Autowired
     private AccountDaoImpl dao;
-    private UserDaoImpl userDao;
+
 
     @BeforeEach
-    public void BeforeEach() {
-        this.dao = new AccountDaoImpl(
-                new DBConnectionProvider(
-                        mysql.getJdbcUrl(),
-                        mysql.getUsername(),
-                        mysql.getPassword()
-                )
-        );
+    public void beforeEach() throws Exception {
+        this.dao.deleteAll();
     }
 
     @Test
@@ -87,5 +74,10 @@ public class AccountDaoTest {
         assertEquals(testAccount.getAccount_password(), account.getAccount_password());
         assertEquals(testAccount.getAccount_username(), account.getAccount_username());
         assertEquals(testAccount.getId(), account.getId());
+    }
+
+    @AfterEach
+    public void afterEach() throws Exception {
+        this.dao.deleteAll();
     }
 }
