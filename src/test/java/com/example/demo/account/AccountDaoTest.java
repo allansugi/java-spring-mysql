@@ -27,12 +27,6 @@ public class AccountDaoTest {
     @Autowired
     private AccountDaoImpl dao;
 
-
-    @BeforeEach
-    public void beforeEach() throws Exception {
-        this.dao.deleteAll();
-    }
-
     @Test
     @DisplayName("store account into database")
     public void store_success() throws Exception {

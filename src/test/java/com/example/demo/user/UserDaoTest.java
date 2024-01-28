@@ -20,11 +20,6 @@ public class UserDaoTest {
     @Autowired
     private UserDaoImpl dao;
 
-    @BeforeEach
-    public void beforeEach() throws Exception {
-        this.dao.deleteAll();
-    }
-
     @Test
     @DisplayName("store user into database")
     public void store_success() throws Exception {
