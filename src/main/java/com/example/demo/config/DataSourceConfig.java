@@ -6,6 +6,9 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 
+/**
+ * The datasource below are used for docker container
+ */
 @Configuration
 public class DataSourceConfig {
     @Bean
