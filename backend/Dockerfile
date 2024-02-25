@@ -1,6 +1,6 @@
 FROM eclipse-temurin:17-jdk-jammy as base
 
-WORKDIR /app
+WORKDIR /app/backend
 
 COPY .mvn/ .mvn
 COPY mvnw pom.xml ./

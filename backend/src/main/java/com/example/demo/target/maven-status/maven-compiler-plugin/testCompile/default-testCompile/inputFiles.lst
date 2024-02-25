@@ -1,0 +1,5 @@
+/app/backend/src/test/java/com/example/demo/user/UserServiceTest.java
+/app/backend/src/test/java/com/example/demo/account/AccountControllerTest.java
+/app/backend/src/test/java/com/example/demo/account/AccountServiceTest.java
+/app/backend/src/test/java/com/example/demo/user/UserControllerTest.java
+/app/backend/src/test/java/com/example/demo/DemoApplicationTests.java
