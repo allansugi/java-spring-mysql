@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/user")
 @RestController
 public class UserControllerImpl implements UserController {
@@ -32,6 +33,7 @@ public class UserControllerImpl implements UserController {
     @ResponseBody
     @Override
     public ResponseEntity<Response<String>> register(@RequestBody UserRegisterForm form) throws DatabaseErrorException, BadRequestException, RegisterArgumentException {
+        System.out.println(form);
         Response<String> response = service.addUser(form);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }

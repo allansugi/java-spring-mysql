@@ -40,16 +40,63 @@ export default function Login() {
         setIsRegister(true);
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!isRegister && username.length !== 0 && password.length !== 0) {
             // TODO: use API related to login
+            try {
+                const response = await fetch("http://localhost:8080/api/user/login", {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: username,
+                        password: password
+                    })
+                });
+
+                if (response.ok) {
+                    setError(false);
+                    navigate("/home");
+                } else {
+                    setError(true);
+                    return;
+                }
+            } catch (error) {
+                console.log(error);
+                return;
+            }
+
             navigate('/home');
         } else if (isRegister && email.length !== 0 && username.length !== 0 && password.length !== 0) {
             // TODO: use API related to register
+            try {
+                const response = await fetch("http://localhost:8080/api/user/register", {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        email: email,
+                        password: password
+                    })
+                });
+                console.log(response);
+            } catch (error) {
+                console.log(error);
+                return;
+            }
+
             setEmail("");
             setUsername("");
             setPassword("");
             setIsRegister(false);
+            setError(false);
         } else {
             setError(true);
         }
@@ -65,6 +112,9 @@ export default function Login() {
                             Make sure that you remember your credential information 
                             because there is currently no other way to recover your account.
                         </Alert>
+                        {error && <Alert severity='error'>
+                            incorrect username, email or password
+                        </Alert>}
                         {isRegister && <TextField onChange={handleEmailChange} required variant="outlined" label="Email" />}
                         <TextField onChange={handleUsernameChange} required variant="outlined" label={isRegister ? "Username" : "Username or Email"}/>
                         <TextField

@@ -23,11 +23,13 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     private final UserDaoImpl dao;
     private final JWTUtil util;
+    private final PasswordEncoder encoder;
 
     @Autowired
     public UserServiceImpl(UserDaoImpl dao, JWTUtil util) {
         this.dao = dao;
         this.util = util;
+        this.encoder = new BCryptPasswordEncoder();
     }
 
     private User convertToData(UserRegisterForm form) {
@@ -35,12 +37,10 @@ public class UserServiceImpl implements UserService {
     }
 
     private String encryptPassword(String password) {
-        PasswordEncoder encoder = new BCryptPasswordEncoder();
         return BCrypt.hashpw(password, encoder.encode(password));
     }
 
     private Boolean passwordMatches(String password, String hashedPassword) {
-        PasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder.matches(password, hashedPassword);
     }
 

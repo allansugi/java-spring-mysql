@@ -7,5 +7,12 @@ export default defineConfig({
   server: {
     host: true,
     port: 3000, // This is the port which we will use in docker
+    // proxy: {
+    //   '/api': {
+    //     target: 'http://spring:8080',
+    //     changeOrigin: true,
+    //     secure: false
+    //   }
+    // }
   }
 })
